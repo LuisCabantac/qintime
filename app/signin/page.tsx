@@ -1,8 +1,11 @@
-import Logo from "@/components/Logo";
-import { auth } from "@/lib/auth";
-import { signInAction } from "@/lib/auth-actions";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
+
+import { auth } from "@/lib/auth";
+import { signInAction } from "@/lib/auth-actions";
+
+import Logo from "@/components/Logo";
+import SignInForm from "@/components/SignInForm";
 
 export const metadata: Metadata = {
   title: "Sign in",
@@ -17,7 +20,8 @@ export default async function Page() {
     <section className="py-52 text-[#212529] md:py-44">
       <Logo />
       <form action={signInAction} className="mt-4 flex flex-col gap-2">
-        <div className="grid gap-1">
+        <SignInForm />
+        {/* <div className="grid gap-1">
           <label className="text-sm font-medium">Email:</label>
           <input
             type="email"
@@ -42,7 +46,7 @@ export default async function Page() {
           className="mt-2 rounded-lg bg-[#212529] px-4 py-2 font-medium text-[#f8f9fa]"
         >
           Sign in
-        </button>
+        </button> */}
       </form>
     </section>
   );
