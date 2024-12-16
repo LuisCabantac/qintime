@@ -34,7 +34,7 @@ export default function SignInForm() {
         disabled={status.pending}
         className="mt-2 rounded-lg bg-[#212529] px-4 py-2 font-medium text-[#f8f9fa] disabled:cursor-not-allowed"
       >
-        Sign in
+        {status.pending ? "Signing in..." : "Sign in"}
       </button>
     </>
   );
