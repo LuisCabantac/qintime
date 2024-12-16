@@ -53,7 +53,7 @@ export default function AttendeesSection({
         />
       ) : (
         <>
-          <div className="mb-2 flex items-center justify-between px-4 md:px-2">
+          <div className="mb-2 flex items-center justify-between gap-4 px-4 md:px-2">
             <input
               type="search"
               placeholder="Search..."
