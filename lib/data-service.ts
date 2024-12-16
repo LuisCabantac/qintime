@@ -51,6 +51,57 @@ export async function getAllAttendeesByAdminId(
   return data;
 }
 
+export async function getAllAdminsByAdminId(
+  adminId: string,
+): Promise<IAdmin[] | null> {
+  const session = await auth();
+  if (!session) return null;
+
+  const isAdmin = await getAdminById(adminId);
+  if (!isAdmin) return null;
+
+  const { data } = await supabase
+    .from("admins")
+    .select("*")
+    .order("name", { ascending: true });
+
+  return data;
+}
+
+export async function getAdminByAdminId(
+  adminId: string,
+): Promise<IAdmin | null> {
+  const session = await auth();
+  if (!session) return null;
+
+  const isAdmin = await getAdminById(adminId);
+  if (!isAdmin) return null;
+
+  const { data } = await supabase
+    .from("admins")
+    .select("*")
+    .eq("id", adminId)
+    .single();
+
+  return data;
+}
+
+export async function getAdminByEmailId(email: string): Promise<IAdmin | null> {
+  const session = await auth();
+  if (!session) return null;
+
+  const isAdmin = await getAdminById(email);
+  if (!isAdmin) return null;
+
+  const { data } = await supabase
+    .from("admins")
+    .select("*")
+    .eq("email", email)
+    .single();
+
+  return data;
+}
+
 export async function getAllAttendeesByQuery(
   query: string,
 ): Promise<IAttendee[] | null> {

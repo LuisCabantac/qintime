@@ -4,29 +4,23 @@ import { redirect } from "next/navigation";
 
 import { auth } from "@/lib/auth";
 import { signOutAction } from "@/lib/auth-actions";
-import {
-  getAllAttendeesByAdminId,
-  getAllAttendeesByQuery,
-} from "@/lib/data-service";
+import { getAllAdminsByAdminId } from "@/lib/data-service";
 
 import Logo from "@/components/Logo";
-import AttendeesSection from "@/components/AttendeesSection";
+import AdminsSection from "@/components/AdminsSection";
 
 export const metadata: Metadata = {
-  title: "Attendees | QInTime",
+  title: "Admins",
 };
 
 export default async function Home() {
   const session = await auth();
   if (!session) redirect("/signin");
 
-  async function getAllAttendees(adminId: string, query: string) {
+  async function getAllAdmins(adminId: string) {
     "use server";
-    if (!query) {
-      const attendees = await getAllAttendeesByAdminId(adminId);
-      return attendees;
-    }
-    const attendees = await getAllAttendeesByQuery(query);
+
+    const attendees = await getAllAdminsByAdminId(adminId);
     return attendees;
   }
 
@@ -45,15 +39,15 @@ export default async function Home() {
           </form>
         </div>
         <div className="flex gap-2">
-          <Link href="/" className="font-bold">
+          <Link href="/" className="text-[#343a40]">
             Attendees
           </Link>
-          <Link href="/admins" className="text-[#343a40]">
+          <Link href="/admins" className="font-bold">
             Admins
           </Link>
         </div>
       </nav>
-      <AttendeesSection onGetAllAttendees={getAllAttendees} session={session} />
+      <AdminsSection onGetAllAdmins={getAllAdmins} session={session} />
     </section>
   );
 }

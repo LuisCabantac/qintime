@@ -2,39 +2,36 @@
 
 import { useState } from "react";
 import { Session } from "next-auth";
-import { deleteAttendee } from "@/lib/user-actions";
+import { deleteAdmin } from "@/lib/user-actions";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { IAttendee } from "@/lib/data-service";
+import { IAdmin } from "@/lib/data-service";
 
 import UserCard from "@/components/UserCard";
 import UserForm from "@/components/UserForm";
 
-export default function HomeSection({
+export default function AdminsSection({
   session,
-  onGetAllAttendees,
+  onGetAllAdmins,
 }: {
   session: Session;
-  onGetAllAttendees: (
-    adminId: string,
-    query: string,
-  ) => Promise<IAttendee[] | null>;
+  onGetAllAdmins: (adminId: string) => Promise<IAdmin[] | null>;
 }) {
   const queryClient = useQueryClient();
-  const [search, setSearch] = useState("");
+
   const [showUserForm, setShowUserForm] = useState(false);
 
-  const { data: attendees, isPending: attendeesIsPending } = useQuery({
-    queryKey: ["attendees", search],
-    queryFn: () => onGetAllAttendees(session?.user?.id ?? "", search),
+  const { data: admins, isPending: adminsIsPending } = useQuery({
+    queryKey: ["admins"],
+    queryFn: () => onGetAllAdmins(session?.user?.id ?? ""),
   });
 
-  const { mutate: handleDeleteAttendee, isPending: deleteAttendeeIsPending } =
+  const { mutate: handleDeleteAdmin, isPending: deleteAdminIsPending } =
     useMutation({
-      mutationFn: deleteAttendee,
+      mutationFn: deleteAdmin,
       onSuccess: () => {
         queryClient.invalidateQueries({
-          queryKey: ["attendees", search],
+          queryKey: ["admins"],
         });
       },
     });
@@ -46,20 +43,10 @@ export default function HomeSection({
   return (
     <div className="mt-4 md:mt-2">
       {showUserForm ? (
-        <UserForm
-          type="attendee"
-          search={search}
-          handleSetShowUserForm={setShowUserForm}
-        />
+        <UserForm type="admin" handleSetShowUserForm={setShowUserForm} />
       ) : (
         <>
-          <div className="mb-2 flex items-center justify-between px-4 md:px-2">
-            <input
-              type="search"
-              placeholder="Search..."
-              className="rounded-lg border border-[#868e96] bg-transparent px-4 py-2 disabled:cursor-not-allowed"
-              onChange={(event) => setSearch(event.target.value)}
-            />
+          <div className="mb-2 flex items-center justify-end px-4 md:px-2">
             <button
               type="button"
               onClick={handleToggleShowUserForm}
@@ -69,7 +56,7 @@ export default function HomeSection({
             </button>
           </div>
           <ul>
-            {attendeesIsPending &&
+            {adminsIsPending &&
               Array(6)
                 .fill(undefined)
                 .map((_, index) => (
@@ -93,19 +80,19 @@ export default function HomeSection({
                     </div>
                   </li>
                 ))}
-            {attendees?.length
-              ? attendees?.map((attendee) => (
+            {admins?.length
+              ? admins?.map((admin) => (
                   <UserCard
-                    key={attendee.id}
-                    attendee={attendee}
-                    onDeleteAttendee={handleDeleteAttendee}
-                    deleteAttendeeIsPending={deleteAttendeeIsPending}
+                    key={admin.id}
+                    user={admin}
+                    onDeleteUser={handleDeleteAdmin}
+                    deleteUserIsPending={deleteAdminIsPending}
                   />
                 ))
               : null}
-            {!attendeesIsPending && !attendees?.length ? (
+            {!adminsIsPending && !admins?.length ? (
               <li className="flex items-center justify-center py-10 font-medium">
-                No attendees have been added just yet.
+                No admins have been added just yet.
               </li>
             ) : null}
           </ul>

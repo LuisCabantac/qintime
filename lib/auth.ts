@@ -12,6 +12,7 @@ interface IUser {
 }
 
 export interface ISession {
+  id: string;
   user: IUser;
   expires: string;
 }
