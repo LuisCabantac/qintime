@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { format, parseISO, subHours } from "date-fns";
 
 import { auth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
@@ -104,4 +105,85 @@ export async function deleteAdmin(adminId: string) {
   const { error } = await supabase.from("admins").delete().eq("id", adminId);
 
   if (error) throw new Error(error.message);
+}
+
+export async function verifyAttendee(attendeeId: string) {
+  const session = await auth();
+
+  if (!session) return redirect("/signin");
+
+  const isAdmin = await getAdminById(session.user?.id ?? "");
+  if (!isAdmin)
+    return {
+      success: false,
+      message: "You do not have permission to access this action.",
+    };
+
+  const attendee = await getAttendeeByUserId(attendeeId);
+  if (!attendee)
+    return {
+      success: false,
+      message: "Invalid QR Code. User not found in the attendee list.",
+    };
+
+  if (!attendee.inTime && !attendee.outTime) {
+    const updatedAttendee = {
+      name: attendee.name,
+      section: attendee.section,
+      inTime: format(
+        subHours(parseISO(format(new Date(), "yyyy-MM-dd'T'HH:mm")), 8),
+        "yyyy-MM-dd'T'HH:mm:ss.SSSSSSxxx",
+      ),
+      outTime: attendee.outTime,
+    };
+
+    const { error } = await supabase
+      .from("attendees")
+      .update([updatedAttendee])
+      .eq("id", attendeeId);
+
+    if (error)
+      return {
+        success: false,
+        message: "Error during check-in. Please try again.",
+      };
+
+    return {
+      success: true,
+      message: "Successfully checked in!",
+    };
+  }
+
+  if (attendee.inTime && !attendee.outTime) {
+    const updatedAttendee = {
+      name: attendee.name,
+      section: attendee.section,
+      inTime: attendee.inTime,
+      outTime: format(
+        subHours(parseISO(format(new Date(), "yyyy-MM-dd'T'HH:mm")), 8),
+        "yyyy-MM-dd'T'HH:mm:ss.SSSSSSxxx",
+      ),
+    };
+
+    const { error } = await supabase
+      .from("attendees")
+      .update([updatedAttendee])
+      .eq("id", attendeeId);
+
+    if (error)
+      return {
+        success: false,
+        message: "Error during check-out. Please try again.",
+      };
+
+    return {
+      success: true,
+      message: "Successfully checked out!",
+    };
+  }
+
+  return {
+    success: true,
+    message: "You are all set.",
+  };
 }

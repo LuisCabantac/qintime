@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { format } from "date-fns";
 import { Session } from "next-auth";
 import { QRCodeSVG } from "qrcode.react";
 import { UseMutateFunction } from "@tanstack/react-query";
@@ -39,11 +40,19 @@ export default function UserCard({
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-sm font-medium">In time</p>
-                <p className="text-sm">{user.inTime ? user.inTime : "N/A"}</p>
+                <p className="text-sm">
+                  {user.inTime
+                    ? format(user.inTime, "MMMM dd, yyyy hh:mm a")
+                    : "N/A"}
+                </p>
               </div>
               <div>
                 <p className="text-sm font-medium">Out time</p>
-                <p className="text-sm">{user.outTime ? user.outTime : "N/A"}</p>
+                <p className="text-sm">
+                  {user.outTime
+                    ? format(user.outTime, "MMMM dd, yyyy hh:mm a")
+                    : "N/A"}
+                </p>
               </div>
             </div>
           )}
@@ -78,7 +87,7 @@ export default function UserCard({
               fgColor="#212529"
               bgColor="#f1f3f5"
               size={180}
-              value={`https://qintime.vercel.app/verify/${user.id}`}
+              value={`https://qintime.vercel.app/verify?attendee=${user.id}`}
             />
             <div className="flex flex-col items-center justify-center">
               <h2 className="font-medium">{user.name}</h2>
