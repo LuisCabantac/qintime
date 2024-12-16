@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Session } from "next-auth";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { IAttendie } from "@/lib/data-service";
 
@@ -19,13 +19,24 @@ export default function HomeSection({
     query: string,
   ) => Promise<IAttendie[] | null>;
 }) {
+  const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [showUserForm, setShowUserForm] = useState(false);
 
-  const { data: attendies, isPending } = useQuery({
+  const { data: attendies, isPending: attendiesIsPending } = useQuery({
     queryKey: ["attendies", search],
     queryFn: () => onGetAllAttendies(session?.user?.id ?? "", search),
   });
+
+  const { mutate: deleteAttendie, isPending: deleteAttendieIsPending } =
+    useMutation({
+      mutationFn: () => {},
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["attendies", search],
+        });
+      },
+    });
 
   function handleToggleShowUserForm() {
     setShowUserForm(!showUserForm);
@@ -57,7 +68,7 @@ export default function HomeSection({
             </button>
           </div>
           <ul>
-            {isPending &&
+            {attendiesIsPending &&
               Array(6)
                 .fill(undefined)
                 .map((_, index) => (
@@ -86,8 +97,8 @@ export default function HomeSection({
                   <UserCard key={attendie.id} attendie={attendie} />
                 ))
               : null}
-            {isPending && !attendies ? (
-              <li className="h-screen font-medium">
+            {!attendiesIsPending && !attendies ? (
+              <li className="flex items-center justify-center font-medium">
                 No attendies have been added just yet.
               </li>
             ) : null}
