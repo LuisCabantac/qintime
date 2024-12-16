@@ -31,7 +31,7 @@ export default async function Home() {
 
   return (
     <section>
-      <nav className="flex items-center justify-between border-b border-[#e9ecef] px-4 py-4 md:py-2">
+      <nav className="flex items-center justify-between border-b border-[#e9ecef] px-4 py-4 md:px-2 md:py-2">
         <Logo size="w-8" />
         <form action={signOutAction}>
           <button
