@@ -103,8 +103,8 @@ export default function HomeSection({
                   />
                 ))
               : null}
-            {!attendeesIsPending && !attendees ? (
-              <li className="flex items-center justify-center font-medium">
+            {!attendeesIsPending && !attendees?.length ? (
+              <li className="flex items-center justify-center py-10 font-medium">
                 No attendees have been added just yet.
               </li>
             ) : null}
