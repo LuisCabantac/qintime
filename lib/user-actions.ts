@@ -2,7 +2,6 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { format, parseISO, subHours } from "date-fns";
 
 import { auth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
@@ -130,10 +129,7 @@ export async function verifyAttendee(attendeeId: string) {
     const updatedAttendee = {
       name: attendee.name,
       section: attendee.section,
-      inTime: format(
-        subHours(parseISO(format(new Date(), "yyyy-MM-dd'T'HH:mm")), 8),
-        "yyyy-MM-dd'T'HH:mm:ss.SSSSSSxxx",
-      ),
+      inTime: new Date(),
       outTime: attendee.outTime,
     };
 
@@ -159,10 +155,7 @@ export async function verifyAttendee(attendeeId: string) {
       name: attendee.name,
       section: attendee.section,
       inTime: attendee.inTime,
-      outTime: format(
-        subHours(parseISO(format(new Date(), "yyyy-MM-dd'T'HH:mm")), 8),
-        "yyyy-MM-dd'T'HH:mm:ss.SSSSSSxxx",
-      ),
+      outTime: new Date(),
     };
 
     const { error } = await supabase
