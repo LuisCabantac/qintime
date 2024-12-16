@@ -8,7 +8,7 @@ export interface IAdmin {
   readonly password: string;
 }
 
-export interface IAttendie {
+export interface IAttendee {
   readonly id: string;
   name: string;
   section: string;
@@ -34,9 +34,9 @@ export async function getAdminById(adminId: string): Promise<IAdmin | null> {
   return data;
 }
 
-export async function getAllAttendiesByAdminId(
+export async function getAllAttendeesByAdminId(
   adminId: string,
-): Promise<IAttendie[] | null> {
+): Promise<IAttendee[] | null> {
   const session = await auth();
   if (!session) return null;
 
@@ -44,21 +44,21 @@ export async function getAllAttendiesByAdminId(
   if (!isAdmin) return null;
 
   const { data } = await supabase
-    .from("attendies")
+    .from("attendees")
     .select("*")
     .order("name", { ascending: true });
 
   return data;
 }
 
-export async function getAllAttendiesByQuery(
+export async function getAllAttendeesByQuery(
   query: string,
-): Promise<IAttendie[] | null> {
+): Promise<IAttendee[] | null> {
   const session = await auth();
   if (!session) return null;
 
   const { data } = await supabase
-    .from("attendies")
+    .from("attendees")
     .select("*")
     .ilike("name", `%${query}%`)
     .order("name", { ascending: true });
@@ -66,16 +66,30 @@ export async function getAllAttendiesByQuery(
   return data;
 }
 
-export async function getAttendieByName(
+export async function getAttendeeByName(
   name: string,
-): Promise<IAttendie | null> {
+): Promise<IAttendee | null> {
   const session = await auth();
   if (!session) return null;
 
   const { data } = await supabase
-    .from("attendies")
+    .from("attendees")
     .select("*")
     .eq("name", name)
+    .single();
+  return data;
+}
+
+export async function getAttendeeByUserId(
+  userId: string,
+): Promise<IAttendee | null> {
+  const session = await auth();
+  if (!session) return null;
+
+  const { data } = await supabase
+    .from("attendees")
+    .select("*")
+    .eq("id", userId)
     .single();
   return data;
 }

@@ -4,8 +4,8 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { signOutAction } from "@/lib/auth-actions";
 import {
-  getAllAttendiesByAdminId,
-  getAllAttendiesByQuery,
+  getAllAttendeesByAdminId,
+  getAllAttendeesByQuery,
 } from "@/lib/data-service";
 
 import Logo from "@/components/Logo";
@@ -19,14 +19,14 @@ export default async function Home() {
   const session = await auth();
   if (!session) redirect("/signin");
 
-  async function getAllAttendies(adminId: string, query: string) {
+  async function getAllAttendees(adminId: string, query: string) {
     "use server";
     if (!query) {
-      const attendies = await getAllAttendiesByAdminId(adminId);
-      return attendies;
+      const attendees = await getAllAttendeesByAdminId(adminId);
+      return attendees;
     }
-    const attendies = await getAllAttendiesByQuery(query);
-    return attendies;
+    const attendees = await getAllAttendeesByQuery(query);
+    return attendees;
   }
 
   return (
@@ -42,7 +42,7 @@ export default async function Home() {
           </button>
         </form>
       </nav>
-      <HomeSection onGetAllAttendies={getAllAttendies} session={session} />
+      <HomeSection onGetAllAttendees={getAllAttendees} session={session} />
     </section>
   );
 }

@@ -4,36 +4,36 @@ import { useState } from "react";
 import { Session } from "next-auth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { IAttendie } from "@/lib/data-service";
+import { IAttendee } from "@/lib/data-service";
 
 import UserCard from "@/components/UserCard";
 import UserForm from "@/components/UserForm";
 
 export default function HomeSection({
   session,
-  onGetAllAttendies,
+  onGetAllAttendees,
 }: {
   session: Session;
-  onGetAllAttendies: (
+  onGetAllAttendees: (
     adminId: string,
     query: string,
-  ) => Promise<IAttendie[] | null>;
+  ) => Promise<IAttendee[] | null>;
 }) {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [showUserForm, setShowUserForm] = useState(false);
 
-  const { data: attendies, isPending: attendiesIsPending } = useQuery({
-    queryKey: ["attendies", search],
-    queryFn: () => onGetAllAttendies(session?.user?.id ?? "", search),
+  const { data: attendees, isPending: attendeesIsPending } = useQuery({
+    queryKey: ["attendees", search],
+    queryFn: () => onGetAllAttendees(session?.user?.id ?? "", search),
   });
 
-  const { mutate: deleteAttendie, isPending: deleteAttendieIsPending } =
+  const { mutate: deleteAttendee, isPending: deleteAttendeeIsPending } =
     useMutation({
       mutationFn: () => {},
       onSuccess: () => {
         queryClient.invalidateQueries({
-          queryKey: ["attendies", search],
+          queryKey: ["attendees", search],
         });
       },
     });
@@ -46,7 +46,7 @@ export default function HomeSection({
     <div className="mt-4 md:mt-2">
       {showUserForm ? (
         <UserForm
-          type="attendie"
+          type="attendee"
           search={search}
           handleSetShowUserForm={setShowUserForm}
         />
@@ -68,7 +68,7 @@ export default function HomeSection({
             </button>
           </div>
           <ul>
-            {attendiesIsPending &&
+            {attendeesIsPending &&
               Array(6)
                 .fill(undefined)
                 .map((_, index) => (
@@ -92,14 +92,14 @@ export default function HomeSection({
                     </div>
                   </li>
                 ))}
-            {attendies?.length
-              ? attendies?.map((attendie) => (
-                  <UserCard key={attendie.id} attendie={attendie} />
+            {attendees?.length
+              ? attendees?.map((attendee) => (
+                  <UserCard key={attendee.id} attendee={attendee} />
                 ))
               : null}
-            {!attendiesIsPending && !attendies ? (
+            {!attendeesIsPending && !attendees ? (
               <li className="flex items-center justify-center font-medium">
-                No attendies have been added just yet.
+                No attendees have been added just yet.
               </li>
             ) : null}
           </ul>

@@ -3,27 +3,27 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { addAttendies } from "@/lib/user-actions";
+import { addAttendees } from "@/lib/user-actions";
 
 export default function UserForm({
   type,
   search,
   handleSetShowUserForm,
 }: {
-  type: "admin" | "attendie";
+  type: "admin" | "attendee";
   search: string;
   handleSetShowUserForm: Dispatch<SetStateAction<boolean>>;
 }) {
   const queryClient = useQueryClient();
   // const [showPassword, setShowPassword] = useState(false);
 
-  const { mutate: handleAddAttendies, isPending: addAttendiesIsPending } =
+  const { mutate: handleAddAttendees, isPending: addAttendeesIsPending } =
     useMutation({
-      mutationFn: addAttendies,
+      mutationFn: addAttendees,
       onSuccess: () => {
         handleSetShowUserForm(false);
         queryClient.invalidateQueries({
-          queryKey: ["attendies", search],
+          queryKey: ["attendees", search],
         });
       },
     });
@@ -33,19 +33,19 @@ export default function UserForm({
       onSubmit={(event: React.FormEvent) => {
         event.preventDefault();
         const formData = new FormData(event.target as HTMLFormElement);
-        handleAddAttendies(formData);
+        handleAddAttendees(formData);
       }}
       className="mx-4 grid gap-2 md:mx-2"
     >
       <h1 className="text-2xl font-medium">Add {type}</h1>
-      {type === "attendie" && (
+      {type === "attendee" && (
         <div className="grid gap-1">
           <label className="text-sm font-medium">Name:</label>
           <input
             type="text"
             name="name"
             required
-            disabled={addAttendiesIsPending}
+            disabled={addAttendeesIsPending}
             className="rounded-lg border border-[#868e96] bg-transparent px-4 py-2 disabled:cursor-not-allowed"
             placeholder="Enter the user's name..."
           />
@@ -75,14 +75,14 @@ export default function UserForm({
           </div>
         </>
       )}
-      {type === "attendie" && (
+      {type === "attendee" && (
         <div className="grid gap-1">
           <label className="text-sm font-medium">Section:</label>
           <input
             type="text"
             name="section"
             required
-            disabled={addAttendiesIsPending}
+            disabled={addAttendeesIsPending}
             className="rounded-lg border border-[#868e96] bg-transparent px-4 py-2 disabled:cursor-not-allowed"
             placeholder="Enter the user's section..."
           />
@@ -90,7 +90,7 @@ export default function UserForm({
       )}
       <button
         type="submit"
-        disabled={addAttendiesIsPending}
+        disabled={addAttendeesIsPending}
         className="mt-2 rounded-lg bg-[#212529] px-4 py-2 font-medium text-[#f8f9fa] hover:bg-[#1e2125] disabled:cursor-not-allowed"
       >
         Add user
