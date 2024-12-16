@@ -11,7 +11,24 @@ import {
   getAdminById,
   getAttendeeByName,
   getAttendeeByUserId,
+  IAttendee,
 } from "@/lib/data-service";
+
+function normalizeString(str: string): string {
+  return str.trim().toLowerCase();
+}
+
+function compareUser(
+  storedUser: IAttendee | null,
+  inputUser: { name: string; section: string },
+): boolean {
+  if (!storedUser) return false;
+
+  return (
+    normalizeString(storedUser.name) === normalizeString(inputUser.name) &&
+    normalizeString(storedUser.section) === normalizeString(inputUser.section)
+  );
+}
 
 export async function addAttendee(formData: FormData) {
   const session = await auth();
@@ -26,14 +43,15 @@ export async function addAttendee(formData: FormData) {
   const section = formData.get("section") as string;
 
   const existingAttendee = await getAttendeeByName(name);
-  if (existingAttendee?.name === name && existingAttendee?.section === section)
+
+  if (compareUser(existingAttendee, { name, section }))
     throw new Error(
       `User with the name '${name}' and section '${section}' already exists.`,
     );
 
   const newAttendee = {
-    name,
-    section,
+    name: name.split(" ").join(" "),
+    section: section.split(" ").join(" ").toUpperCase(),
   };
 
   const { error } = await supabase.from("attendees").insert([newAttendee]);
