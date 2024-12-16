@@ -37,7 +37,17 @@ export default function UserForm({
       }}
       className="mx-4 grid gap-2 md:mx-2"
     >
-      <h1 className="text-2xl font-medium">Add {type}</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-medium">Add {type}</h1>
+        <button
+          type="button"
+          disabled={addAttendeesIsPending}
+          onClick={() => handleSetShowUserForm(false)}
+          className="font-medium text-[#212529] disabled:cursor-not-allowed"
+        >
+          Cancel
+        </button>
+      </div>
       {type === "attendee" && (
         <div className="grid gap-1">
           <label className="text-sm font-medium">Name:</label>
