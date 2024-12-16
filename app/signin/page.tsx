@@ -17,9 +17,9 @@ export default async function Page() {
   if (session) return redirect("/");
 
   return (
-    <section className="mx-4 mt-4 py-52 text-[#212529] md:py-44">
+    <section className="mx-6 mt-4 py-52 text-[#212529] md:py-44">
       <Logo size="w-14" />
-      <form action={signInAction} className="flex flex-col gap-2 md:mx-2">
+      <form action={signInAction} className="mt-4 flex flex-col gap-2 md:mx-2">
         <SignInForm />
       </form>
     </section>
