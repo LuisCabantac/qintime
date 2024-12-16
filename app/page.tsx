@@ -3,6 +3,10 @@ import { redirect } from "next/navigation";
 
 import { auth } from "@/lib/auth";
 import { signOutAction } from "@/lib/auth-actions";
+import {
+  getAllAttendiesByAdminId,
+  getAllAttendiesByQuery,
+} from "@/lib/data-service";
 
 import Logo from "@/components/Logo";
 
@@ -13,6 +17,16 @@ export const metadata: Metadata = {
 export default async function Home() {
   const session = await auth();
   if (!session) redirect("/signin");
+
+  async function getAllAttendies(adminId: string, query: string) {
+    "use server";
+    if (!query) {
+      const attendies = await getAllAttendiesByAdminId(adminId);
+      return attendies;
+    }
+    const attendies = await getAllAttendiesByQuery(query);
+    return attendies;
+  }
 
   return (
     <section>
