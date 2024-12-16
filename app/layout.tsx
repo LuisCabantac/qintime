@@ -23,7 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.className} mx-8 bg-[#f8f9fa] text-[#212529] antialiased md:mx-auto md:max-w-2xl`}
+        className={`${inter.className} bg-[#f8f9fa] text-[#212529] antialiased md:mx-auto md:max-w-2xl`}
       >
         {children}
       </body>
