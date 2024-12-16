@@ -2,8 +2,17 @@ import { useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 
 import { IAttendee } from "@/lib/data-service";
+import { UseMutateFunction } from "@tanstack/react-query";
 
-export default function UserCard({ attendee }: { attendee: IAttendee }) {
+export default function UserCard({
+  attendee,
+  onDeleteAttendee,
+  deleteAttendeeIsPending,
+}: {
+  attendee: IAttendee;
+  onDeleteAttendee: UseMutateFunction<undefined, Error, string, unknown>;
+  deleteAttendeeIsPending: boolean;
+}) {
   const [showQr, setShowQr] = useState(false);
 
   function handleToggleShowQr() {
@@ -38,14 +47,18 @@ export default function UserCard({ attendee }: { attendee: IAttendee }) {
             </div>
           </div>
         </div>
-        <button type="button">
+        <button
+          type="button"
+          disabled={deleteAttendeeIsPending}
+          onClick={() => onDeleteAttendee(attendee.id)}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="size-6 stroke-[#e03131]"
+            className="size-6 stroke-[#e03131] disabled:cursor-not-allowed"
           >
             <path
               strokeLinecap="round"

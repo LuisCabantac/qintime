@@ -3,7 +3,7 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { addAttendees } from "@/lib/user-actions";
+import { addAttendee } from "@/lib/user-actions";
 
 export default function UserForm({
   type,
@@ -17,9 +17,9 @@ export default function UserForm({
   const queryClient = useQueryClient();
   // const [showPassword, setShowPassword] = useState(false);
 
-  const { mutate: handleAddAttendees, isPending: addAttendeesIsPending } =
+  const { mutate: handleAddAttendee, isPending: addAttendeesIsPending } =
     useMutation({
-      mutationFn: addAttendees,
+      mutationFn: addAttendee,
       onSuccess: () => {
         handleSetShowUserForm(false);
         queryClient.invalidateQueries({
@@ -33,7 +33,7 @@ export default function UserForm({
       onSubmit={(event: React.FormEvent) => {
         event.preventDefault();
         const formData = new FormData(event.target as HTMLFormElement);
-        handleAddAttendees(formData);
+        handleAddAttendee(formData);
       }}
       className="mx-4 grid gap-2 md:mx-2"
     >

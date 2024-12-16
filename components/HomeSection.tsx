@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Session } from "next-auth";
+import { deleteAttendee } from "@/lib/user-actions";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { IAttendee } from "@/lib/data-service";
@@ -28,9 +29,9 @@ export default function HomeSection({
     queryFn: () => onGetAllAttendees(session?.user?.id ?? "", search),
   });
 
-  const { mutate: deleteAttendee, isPending: deleteAttendeeIsPending } =
+  const { mutate: handleDeleteAttendee, isPending: deleteAttendeeIsPending } =
     useMutation({
-      mutationFn: () => {},
+      mutationFn: deleteAttendee,
       onSuccess: () => {
         queryClient.invalidateQueries({
           queryKey: ["attendees", search],
@@ -94,7 +95,12 @@ export default function HomeSection({
                 ))}
             {attendees?.length
               ? attendees?.map((attendee) => (
-                  <UserCard key={attendee.id} attendee={attendee} />
+                  <UserCard
+                    key={attendee.id}
+                    attendee={attendee}
+                    onDeleteAttendee={handleDeleteAttendee}
+                    deleteAttendeeIsPending={deleteAttendeeIsPending}
+                  />
                 ))
               : null}
             {!attendeesIsPending && !attendees ? (

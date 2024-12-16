@@ -11,7 +11,7 @@ import {
   getAttendeeByUserId,
 } from "@/lib/data-service";
 
-export async function addAttendees(formData: FormData) {
+export async function addAttendee(formData: FormData) {
   const session = await auth();
 
   if (!session) return redirect("/signin");
@@ -52,4 +52,8 @@ export async function deleteAttendee(userId: string) {
 
   const existingAttendee = await getAttendeeByUserId(userId);
   if (!existingAttendee) throw new Error("This user does not exist.");
+
+  const { error } = await supabase.from("attendees").delete().eq("id", userId);
+
+  if (error) throw new Error(error.message);
 }
