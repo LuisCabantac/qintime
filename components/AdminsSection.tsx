@@ -46,7 +46,8 @@ export default function AdminsSection({
         <UserForm type="admin" handleSetShowUserForm={setShowUserForm} />
       ) : (
         <>
-          <div className="mb-2 flex items-center justify-end px-4 md:px-2">
+          <div className="mb-2 flex items-center justify-between px-4 md:px-2">
+            <h1 className="text-2xl font-medium">All admins</h1>
             <button
               type="button"
               onClick={handleToggleShowUserForm}
