@@ -26,7 +26,7 @@ export default async function Home() {
 
   return (
     <section>
-      <nav className="grid gap-2 border-b border-[#e9ecef] px-4 py-4 md:px-2 md:py-2">
+      <nav className="grid gap-2 border-b border-[#e9ecef] px-4 pb-2 pt-4 md:px-2">
         <div className="flex items-center justify-between">
           <Logo size="w-8" />
           <form action={signOutAction}>
