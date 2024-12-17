@@ -1,15 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Session } from "next-auth";
-import { deleteAttendee } from "@/lib/user-actions";
+import { useEffect, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { IAttendee } from "@/lib/data-service";
+import { clearAllAttendeesDates, deleteAttendee } from "@/lib/user-actions";
 
 import UserCard from "@/components/UserCard";
 import UserForm from "@/components/UserForm";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export default function AttendeesSection({
   session,
@@ -26,8 +26,9 @@ export default function AttendeesSection({
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
   const [search, setSearch] = useState("");
-  const [showUserForm, setShowUserForm] = useState(false);
   const [filter, setFilter] = useState("all");
+  const [showUserForm, setShowUserForm] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   const { data: attendees, isPending: attendeesIsPending } = useQuery({
     queryKey: ["attendees", search],
@@ -50,8 +51,25 @@ export default function AttendeesSection({
       },
     });
 
+  const {
+    mutate: handleClearAllAttendeesDates,
+    isPending: clearAllAttendeesDatesIsPending,
+  } = useMutation({
+    mutationFn: clearAllAttendeesDates,
+    onSuccess: () => {
+      setShowConfirmation(false);
+      queryClient.invalidateQueries({
+        queryKey: ["attendees", search],
+      });
+    },
+  });
+
   function handleToggleShowUserForm() {
     setShowUserForm(!showUserForm);
+  }
+
+  function handleToggleShowConfirmation() {
+    setShowConfirmation(!showConfirmation);
   }
 
   return (
@@ -66,7 +84,7 @@ export default function AttendeesSection({
         <>
           <div className="mb-2 flex items-center justify-between gap-4 px-4 md:px-2">
             <select
-              className="cursor-pointer bg-transparent px-0"
+              className="cursor-pointer bg-transparent p-0 text-xl font-medium"
               value={filter}
               onChange={(event) => setFilter(event.target.value)}
             >
@@ -93,7 +111,7 @@ export default function AttendeesSection({
             />
             <button
               type="button"
-              onClick={handleToggleShowUserForm}
+              onClick={handleToggleShowConfirmation}
               className="w-[50%] rounded-md bg-[#e03131] px-4 py-2 font-medium text-[#dee2e6]"
             >
               Clear dates
@@ -146,6 +164,38 @@ export default function AttendeesSection({
             ) : null}
           </ul>
         </>
+      )}
+      {showConfirmation && (
+        <div className="modal__container">
+          <div className="flex h-[40%] max-w-[78%] items-center justify-center md:h-[60%] md:max-w-[40%]">
+            <div className="rounded-lg bg-[#f8f9fa] p-4">
+              <h2 className="font-bold">
+                Are you sure you want clear all the users&apos; in and out
+                dates/times?
+              </h2>
+              <div className="mt-2 flex items-center justify-end gap-4">
+                <button
+                  type="button"
+                  onClick={handleToggleShowConfirmation}
+                  disabled={clearAllAttendeesDatesIsPending}
+                  className="font-medium text-[#212529] disabled:cursor-not-allowed"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  disabled={clearAllAttendeesDatesIsPending}
+                  onClick={() => {
+                    handleClearAllAttendeesDates(session?.user?.id ?? "");
+                  }}
+                  className="rounded-lg bg-[#e03131] px-4 py-2 font-medium text-[#f8f9fa]"
+                >
+                  Confirm
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { Session } from "next-auth";
-import { deleteAdmin } from "@/lib/user-actions";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import { deleteAdmin } from "@/lib/user-actions";
 import { IAdmin } from "@/lib/data-service";
 
 import UserCard from "@/components/UserCard";
@@ -47,7 +47,7 @@ export default function AdminsSection({
       ) : (
         <>
           <div className="mb-2 flex items-center justify-between px-4 md:px-2">
-            <h1 className="text-2xl font-medium">All admins</h1>
+            <h1 className="text-xl font-medium">All admins</h1>
             <button
               type="button"
               onClick={handleToggleShowUserForm}
