@@ -30,7 +30,7 @@ export default function UserCard({
 
   return (
     <>
-      <li className="group mx-4 flex items-center gap-2 border-b border-[#dee2e6] py-2 hover:bg-[#f1f3f5] md:px-2">
+      <li className="group mx-4 flex items-center gap-2 border-b border-[#dee2e6] py-2 hover:bg-[#f1f3f5] md:mx-2">
         <div
           onClick={handleToggleShowQr}
           className="flex w-full cursor-pointer items-center justify-between"
