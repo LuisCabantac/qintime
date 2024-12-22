@@ -132,6 +132,20 @@ export async function getAttendeeByName(
   return data;
 }
 
+export async function getAttendeeByStudentNumber(
+  studentNumber: string,
+): Promise<IAttendee | null> {
+  const session = await auth();
+  if (!session) return null;
+
+  const { data } = await supabase
+    .from("attendees")
+    .select("*")
+    .eq("studentNumber", studentNumber)
+    .single();
+  return data;
+}
+
 export async function getAttendeeByUserId(
   userId: string,
 ): Promise<IAttendee | null> {
