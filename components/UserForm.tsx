@@ -98,17 +98,30 @@ export default function UserForm({
         </>
       )}
       {type === "attendee" && (
-        <div className="grid gap-1">
-          <label className="text-sm font-medium">Section:</label>
-          <input
-            type="text"
-            name="section"
-            required
-            disabled={addAttendeesIsPending || addAdminIsPending}
-            className="rounded-lg border border-[#868e96] bg-transparent px-4 py-2 disabled:cursor-not-allowed"
-            placeholder="Enter the user's section..."
-          />
-        </div>
+        <>
+          <div className="grid gap-1">
+            <label className="text-sm font-medium">Student Number:</label>
+            <input
+              type="text"
+              name="studentNumber"
+              required
+              disabled={addAttendeesIsPending || addAdminIsPending}
+              className="rounded-lg border border-[#868e96] bg-transparent px-4 py-2 disabled:cursor-not-allowed"
+              placeholder="Enter the user's student number..."
+            />
+          </div>
+          <div className="grid gap-1">
+            <label className="text-sm font-medium">Section:</label>
+            <input
+              type="text"
+              name="section"
+              required
+              disabled={addAttendeesIsPending || addAdminIsPending}
+              className="rounded-lg border border-[#868e96] bg-transparent px-4 py-2 disabled:cursor-not-allowed"
+              placeholder="Enter the user's section..."
+            />
+          </div>
+        </>
       )}
       <button
         type="submit"

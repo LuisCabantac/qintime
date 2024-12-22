@@ -37,7 +37,11 @@ export default function UserCard({
         >
           <div>
             <h4 className="font-medium group-hover:underline">{user.name}</h4>
-            {"section" in user && <p className="text-sm">{user.section}</p>}
+            {"section" in user && (
+              <p className="text-sm">
+                {user.studentNumber} - {user.section}
+              </p>
+            )}
           </div>
           {"inTime" in user && "outTime" in user && (
             <div className="flex items-center justify-between gap-4">
@@ -95,6 +99,7 @@ export default function UserCard({
             />
             <div className="flex flex-col items-center justify-center">
               <h2 className="font-medium">{user.name}</h2>
+              <p>{user.studentNumber}</p>
               <p>{user.section}</p>
             </div>
             <button

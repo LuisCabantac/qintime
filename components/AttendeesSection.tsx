@@ -112,7 +112,8 @@ export default function AttendeesSection({
             <button
               type="button"
               onClick={handleToggleShowConfirmation}
-              className="w-[50%] rounded-md bg-[#e03131] px-4 py-2 font-medium text-[#dee2e6]"
+              disabled={!attendees?.length ? true : false}
+              className="w-[50%] rounded-md bg-[#e03131] px-4 py-2 font-medium text-[#dee2e6] disabled:cursor-not-allowed"
             >
               Clear dates
             </button>

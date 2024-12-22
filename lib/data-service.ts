@@ -10,6 +10,7 @@ export interface IAdmin {
 
 export interface IAttendee {
   readonly id: string;
+  readonly studentNumber: string;
   name: string;
   section: string;
   inTime: string;

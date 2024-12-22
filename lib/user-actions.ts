@@ -21,12 +21,14 @@ function normalizeString(str: string): string {
 
 function compareUser(
   storedUser: IAttendee | null,
-  inputUser: { name: string; section: string },
+  inputUser: { name: string; section: string; studentNumber: string },
 ): boolean {
   if (!storedUser) return false;
 
   return (
     normalizeString(storedUser.name) === normalizeString(inputUser.name) &&
+    normalizeString(storedUser.studentNumber) ===
+      normalizeString(inputUser.studentNumber) &&
     normalizeString(storedUser.section) === normalizeString(inputUser.section)
   );
 }
@@ -42,10 +44,11 @@ export async function addAttendee(formData: FormData) {
 
   const name = formData.get("name") as string;
   const section = formData.get("section") as string;
+  const studentNumber = formData.get("studentNumber") as string;
 
   const existingAttendee = await getAttendeeByName(name);
 
-  if (compareUser(existingAttendee, { name, section }))
+  if (compareUser(existingAttendee, { name, section, studentNumber }))
     throw new Error(
       `User with the name '${name}' and section '${section}' already exists.`,
     );
@@ -53,6 +56,7 @@ export async function addAttendee(formData: FormData) {
   const newAttendee = {
     name: name.split(" ").join(" "),
     section: section.split(" ").join(" ").toUpperCase(),
+    studentNumber: studentNumber.split(" ").join(" ").toUpperCase(),
   };
 
   const { error } = await supabase.from("attendees").insert([newAttendee]);
