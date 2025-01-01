@@ -52,6 +52,24 @@ export async function getAllAttendeesByAdminId(
   return data;
 }
 
+export async function getAllAttendeesWithoutInTimeByAdminId(
+  adminId: string,
+): Promise<IAttendee[] | null> {
+  const session = await auth();
+  if (!session) return null;
+
+  const isAdmin = await getAdminById(adminId);
+  if (!isAdmin) return null;
+
+  const { data } = await supabase
+    .from("attendees")
+    .select("*")
+    .not("inTime", "is", null)
+    .order("name", { ascending: true });
+
+  return data;
+}
+
 export async function getAllAdminsByAdminId(
   adminId: string,
 ): Promise<IAdmin[] | null> {

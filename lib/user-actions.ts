@@ -9,7 +9,7 @@ import {
   getAdminByAdminId,
   getAdminByEmailId,
   getAdminById,
-  getAllAttendeesByAdminId,
+  getAllAttendeesWithoutInTimeByAdminId,
   getAttendeeByStudentNumber,
   getAttendeeByUserId,
   IAttendee,
@@ -220,34 +220,16 @@ export async function clearAllAttendeesDates(adminId: string) {
   const existingAdmin = await getAdminByAdminId(adminId);
   if (!existingAdmin) throw new Error("This admin does not exist.");
 
-  const allAttendees = await getAllAttendeesByAdminId(adminId);
-  if (!allAttendees) return;
-
-  for (const attendee of allAttendees) {
-    await clearAttendeeDates(attendee.id);
-  }
-}
-
-export async function clearAttendeeDates(attendeeId: string) {
-  const session = await auth();
-
-  if (!session) return redirect("/signin");
-
-  const attendee = await getAttendeeByUserId(attendeeId);
-
-  if (!attendee) return;
-
-  const updatedAttendee = {
-    name: attendee.name,
-    section: attendee.section,
-    inTime: null,
-    outTime: null,
-  };
+  const allAttendees = await getAllAttendeesWithoutInTimeByAdminId(adminId);
+  if (!allAttendees || allAttendees.length === 0) return;
 
   const { error } = await supabase
     .from("attendees")
-    .update([updatedAttendee])
-    .eq("id", attendeeId);
+    .update({ inTime: null, outTime: null })
+    .in(
+      "id",
+      allAttendees.map((a) => a.id),
+    );
 
   if (error) throw new Error(error.message);
 }
