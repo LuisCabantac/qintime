@@ -90,7 +90,7 @@ export default function UserCard({
       </li>
       {showQr && "section" in user && (
         <li className="fixed left-0 top-0 z-10 flex h-full w-full items-center justify-center bg-[#f8f9fa]">
-          <div className="grid gap-1">
+          <div className="flex flex-col items-center gap-1">
             <QRCodeSVG
               fgColor="#212529"
               bgColor="#f8f9fa"
