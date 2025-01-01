@@ -148,9 +148,9 @@ export default function UserCard({
                     onDeleteUser(user.id);
                     setShowConfirmation(false);
                   }}
-                  className="rounded-lg bg-[#e03131] px-4 py-2 font-medium text-[#f8f9fa]"
+                  className="rounded-lg bg-[#e03131] px-4 py-2 font-medium text-[#f8f9fa] disabled:cursor-not-allowed"
                 >
-                  Delete
+                  {deleteUserIsPending ? "Please wait" : "Delete"}
                 </button>
               </div>
             </div>
