@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { differenceInHours } from "date-fns";
 
 import { auth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
@@ -178,11 +179,23 @@ export async function verifyAttendee(attendeeId: string) {
   }
 
   if (attendee.inTime && !attendee.outTime) {
+    const currentTime = new Date();
+    const inTime = new Date(attendee.inTime);
+    const hoursDifference = differenceInHours(currentTime, inTime);
+    const remainingHours = 5 - hoursDifference;
+
+    if (hoursDifference < 5) {
+      return {
+        success: false,
+        message: `You must wait ${Math.ceil(remainingHours)} more hours before checking out.`,
+      };
+    }
+
     const updatedAttendee = {
       name: attendee.name,
       section: attendee.section,
       inTime: attendee.inTime,
-      outTime: new Date(),
+      outTime: currentTime,
     };
 
     const { error } = await supabase
