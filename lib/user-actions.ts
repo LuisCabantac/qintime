@@ -182,12 +182,23 @@ export async function verifyAttendee(attendeeId: string) {
     const currentTime = new Date();
     const inTime = new Date(attendee.inTime);
     const hoursDifference = differenceInHours(currentTime, inTime);
-    const remainingHours = 5 - hoursDifference;
+    const minutesDifference = Math.floor(
+      5 * 60 -
+        (hoursDifference * 60 +
+          (currentTime.getMinutes() - inTime.getMinutes())),
+    );
+    const remainingHours = Math.floor(minutesDifference / 60);
+    const remainingMinutes = minutesDifference % 60;
 
     if (hoursDifference < 5) {
+      const message =
+        remainingHours > 0
+          ? `You must wait ${remainingHours} hours and ${remainingMinutes} minutes before checking out.`
+          : `You must wait ${remainingMinutes} minutes before checking out.`;
+
       return {
         success: false,
-        message: `You must wait ${Math.ceil(remainingHours)} more hours before checking out.`,
+        message,
       };
     }
 
