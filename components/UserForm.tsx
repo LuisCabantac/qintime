@@ -3,14 +3,19 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { addAdmin, addAttendee } from "@/lib/user-actions";
+import { IAdmin, IAttendee } from "@/lib/data-service";
+import { addAdmin, addAttendee, editAttendee } from "@/lib/user-actions";
 
 export default function UserForm({
   type,
+  edit = false,
+  user,
   search,
   handleSetShowUserForm,
 }: {
   type: "admin" | "attendee";
+  edit?: boolean;
+  user?: IAttendee | IAdmin;
   search?: string;
   handleSetShowUserForm: Dispatch<SetStateAction<boolean>>;
 }) {
@@ -37,11 +42,25 @@ export default function UserForm({
     },
   });
 
+  const { mutate: handleEditAttendee, isPending: editAttendeeIsPending } =
+    useMutation({
+      mutationFn: editAttendee,
+      onSuccess: () => {
+        handleSetShowUserForm(false);
+        queryClient.invalidateQueries({
+          queryKey: ["attendees", search],
+        });
+      },
+    });
+
   return (
     <form
       onSubmit={(event: React.FormEvent) => {
         event.preventDefault();
         const formData = new FormData(event.target as HTMLFormElement);
+        if (type === "attendee" && edit) {
+          handleEditAttendee(formData);
+        }
         if (type === "attendee") {
           handleAddAttendee(formData);
         }
@@ -52,16 +71,26 @@ export default function UserForm({
       className="mx-4 grid gap-2 md:mx-2"
     >
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-medium">Add {type}</h1>
+        <h1 className="text-2xl font-medium">
+          {edit ? "Edit" : "Add"} {type}
+        </h1>
         <button
           type="button"
-          disabled={addAttendeesIsPending || addAdminIsPending}
+          disabled={
+            addAttendeesIsPending || addAdminIsPending || editAttendeeIsPending
+          }
           onClick={() => handleSetShowUserForm(false)}
           className="font-medium text-[#212529] disabled:cursor-not-allowed"
         >
           Cancel
         </button>
       </div>
+      <input type="hidden" name="id" defaultValue={user?.id} />
+      <input
+        type="hidden"
+        name="type"
+        defaultValue={"email" in (user ?? {}) ? "admin" : "attendee"}
+      />
       <div className="grid gap-1">
         <label className="text-sm font-medium">Name:</label>
         <input
@@ -71,6 +100,7 @@ export default function UserForm({
           disabled={addAttendeesIsPending || addAdminIsPending}
           className="rounded-lg border border-[#868e96] bg-transparent px-4 py-2 disabled:cursor-not-allowed"
           placeholder="Enter the user's name..."
+          defaultValue={user?.name}
         />
       </div>
       {type === "admin" && (
@@ -83,6 +113,7 @@ export default function UserForm({
               required
               className="rounded-lg border border-[#868e96] bg-transparent px-4 py-2 disabled:cursor-not-allowed"
               placeholder="Enter the user's email..."
+              defaultValue={user && "email" in user ? user.email : ""}
             />
           </div>
           <div className="grid gap-1">
@@ -93,6 +124,7 @@ export default function UserForm({
               required
               className="rounded-lg border border-[#868e96] bg-transparent px-4 py-2 disabled:cursor-not-allowed"
               placeholder="Enter the user's password..."
+              defaultValue={user && "password" in user ? user.password : ""}
             />
           </div>
         </>
@@ -104,10 +136,13 @@ export default function UserForm({
             <input
               type="text"
               name="studentNumber"
-              required
+              required={!edit}
               disabled={addAttendeesIsPending || addAdminIsPending}
               className="rounded-lg border border-[#868e96] bg-transparent px-4 py-2 disabled:cursor-not-allowed"
               placeholder="Enter the user's student number..."
+              defaultValue={
+                user && "studentNumber" in user ? user.studentNumber : ""
+              }
             />
           </div>
           <div className="grid gap-1">
@@ -119,16 +154,19 @@ export default function UserForm({
               disabled={addAttendeesIsPending || addAdminIsPending}
               className="rounded-lg border border-[#868e96] bg-transparent px-4 py-2 disabled:cursor-not-allowed"
               placeholder="Enter the user's section..."
+              defaultValue={user && "section" in user ? user.section : ""}
             />
           </div>
         </>
       )}
       <button
         type="submit"
-        disabled={addAttendeesIsPending || addAdminIsPending}
+        disabled={
+          addAttendeesIsPending || addAdminIsPending || editAttendeeIsPending
+        }
         className="mt-2 rounded-lg bg-[#212529] px-4 py-2 font-medium text-[#f8f9fa] hover:bg-[#1e2125] disabled:cursor-not-allowed"
       >
-        Add user
+        {edit ? "Edit" : "Add"} user
       </button>
     </form>
   );

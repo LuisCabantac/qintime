@@ -134,6 +134,39 @@ export async function deleteAdmin(adminId: string) {
   if (error) throw new Error(error.message);
 }
 
+export async function editAttendee(formData: FormData) {
+  const session = await auth();
+
+  if (!session) return redirect("/signin");
+
+  const isAdmin = await getAdminById(session.user?.id ?? "");
+  if (!isAdmin)
+    throw new Error("You do not have permission to access this action.");
+
+  const name = formData.get("name") as string;
+  const section = formData.get("section") as string;
+  const studentNumber = formData.get("studentNumber") as string;
+  const userId = formData.get("id") as string;
+
+  const existingAttendee = await getAttendeeByUserId(userId);
+  if (!existingAttendee) throw new Error("This user does not exist.");
+
+  const updatedAttendee = {
+    name: name.split(" ").join(" "),
+    section: section.split(" ").join(" ").toUpperCase(),
+    studentNumber: studentNumber.split(" ").join(" "),
+  };
+
+  const { error } = await supabase
+    .from("attendees")
+    .update([updatedAttendee])
+    .eq("id", userId);
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/");
+}
+
 export async function verifyAttendee(attendeeId: string) {
   const session = await auth();
 
