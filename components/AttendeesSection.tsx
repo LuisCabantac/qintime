@@ -123,7 +123,7 @@ export default function AttendeesSection({
           <select
             onChange={(event) => setListType(event.target.value)}
             value={listType}
-            className="px-3 font-medium md:px-1"
+            className="bg-transparent px-3 font-medium md:px-1"
           >
             <option value="list">List</option>
             <option value="table">Table</option>
